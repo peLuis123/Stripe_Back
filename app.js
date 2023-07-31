@@ -26,6 +26,7 @@ const options = {
   swaggerDefinition,
   apis:[`${path.join(__dirname,"./controllers/*js")}`],
 };
+const swaggerSpec = swaggerJSDoc(options);
 app.use("/doc",swaggerUI.serve, swaggerUI.setup(swaggerJSDoc(options)));
 app
     .use(cors({
@@ -35,7 +36,7 @@ app
 
 app.use((req,res,next)=>{
         bodyParser.json()(req,res,next);
-    
+
 });
 app
     .post('/customers', paymentsController.customers)
@@ -49,7 +50,7 @@ app
     .get('/customers/:id/listSources', paymentsController.listSources)
     .get('/userslist', paymentsController.userList)
     .get('/userslist/:id/user', paymentsController.onlycustom)
-app 
+app
     .delete('/customers/:id/delete',paymentsController.delete)
     .delete('/customers/:id/deletecard',paymentsController.deleteCard)
 module.exports = app
