@@ -1,4 +1,4 @@
-//const stripe = require('stripe')(process.env.key_secret);
+
 require('dotenv').config();
 const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
 /**
@@ -16,7 +16,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                  description: Se registra el nombre del usuario
  *              description:
  *                  type: string
- *                  description: pequeña descripcion 
+ *                  description: pequeña descripcion
  *              phone:
  *                  type: string
  *                  description: ingresar un numero para contacto
@@ -29,7 +29,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *              email: pedrorc2018@gmail.com
  *              name: pedro luis ramos calla
  *              description: Mi pequeña descripción
- *              phone: 958104634 
+ *              phone: 958104634
  *      Cards:
  *          type: object
  *          properties:
@@ -41,7 +41,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                  description: Se registra el pais del cliente
  *              address_line1:
  *                  type: string
- *                  description: se ingresa una pequeña referencia de la direccion del cliente 
+ *                  description: se ingresa una pequeña referencia de la direccion del cliente
  *              address_zip:
  *                  type: string
  *                  description: se ingresa el codigo postal de la ciudad o estado del cliente
@@ -73,7 +73,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *              address_country: Peru
  *              address_line1: frente al mercado municipal
  *              address_zip: 04000
- *              number: 4242424242424242 
+ *              number: 4242424242424242
  *              exp_month: 12
  *              exp_year: 2024
  *              cvc: 332
@@ -96,7 +96,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *          example:
  *              amount: 50.5
  *              description: envio desde centro hasta mi casa
- *              CustomerId: cus_A1B23C4D5E         
+ *              CustomerId: cus_A1B23C4D5E
  */
 /**
  * @swagger
@@ -132,17 +132,17 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *              application/json:
  *                  schema:
  *                      type: object
- *                      $ref: '#/components/schemas/User'   
+ *                      $ref: '#/components/schemas/User'
  *      responses:
  *          200:
  *              description: Usuario actualizado con exito
  *              content:
  *                  application/json:
- *                      schema: 
+ *                      schema:
  *                          type: object
  *                          $ref: '#/components/schemas/User'
  *          404:
- *              description: user not found 
+ *              description: user not found
  * /customers/{id}/source:
  *  post:
  *      summary: Añadir una tarjeta nueva a un usuario
@@ -152,7 +152,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *         name: id
  *         description: Se ingrese el ID del usuario al cual vamos a agregar la nueva tarjeta
  *         required: true
- *         schema: 
+ *         schema:
  *          type: string
  *      requestBody:
  *          required: true
@@ -164,25 +164,25 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                      properties:
  *                          TokenId:
  *                              type: string
- *                              example: tok_1A2B3C4D5E                            
+ *                              example: tok_1A2B3C4D5E
  *      responses:
  *          200:
  *              description: La tarjeta fue añadida correctamente
- *          
- *          400: 
+ *
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found       
+ *          404:
+ *              description: Order not found
  * /customers/{id}/cardDefault:
  *  post:
- *      summary: Añadir un metodo de pago(tarjeta de credito) por defecto 
+ *      summary: Añadir un metodo de pago(tarjeta de credito) por defecto
  *      tags: [User]
  *      parameters:
  *       - in: path
  *         name: id
  *         description: Se ingrese el ID del usuario al cual vamos a agregar el metodo de pago por defecto
  *         required: true
- *         schema: 
+ *         schema:
  *          type: string
  *      requestBody:
  *          required: true
@@ -194,14 +194,14 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                      properties:
  *                          CardId:
  *                              type: string
- *                              example: card_1AB23C4D5E                            
+ *                              example: card_1AB23C4D5E
  *      responses:
  *          200:
  *              description: Todas las tarjetas de un usuario especifico
- *          400: 
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found 
+ *          404:
+ *              description: Order not found
  * /userslist/{id}/user:
  *  get:
  *      summary: listar un usuario en STRIPE
@@ -217,11 +217,11 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *              description: all users
  *              content:
  *                  application/json:
- *                      schema: 
+ *                      schema:
  *                          type: object
  *                          $ref: '#/components/schemas/User'
  *          404:
- *              description: user not found 
+ *              description: user not found
  * /userslist:
  *  get:
  *      summary: listar todos los usuarios en STRIPE
@@ -231,20 +231,20 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *              description: all users
  *              content:
  *                  application/json:
- *                      schema: 
+ *                      schema:
  *                          type: array
  *                          items:
- *                              $ref: '#/components/schemas/User'     
+ *                              $ref: '#/components/schemas/User'
  * /customers/{id}/listSources:
  *  get:
- *      summary: listar las tarjetas de un usuario 
+ *      summary: listar las tarjetas de un usuario
  *      tags: [User]
  *      parameters:
  *       - in: path
  *         name: id
  *         description: Se ingrese el ID del usuario que se desea ver las tarjetas
  *         required: true
- *         schema: 
+ *         schema:
  *          type: string
  *      requestBody:
  *          required: true
@@ -256,20 +256,20 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                      properties:
  *                          limit:
  *                              type: integer
- *                              example: 10                            
+ *                              example: 10
  *      responses:
  *          200:
  *              description: Todas las tarjetas de un usuario especifico
  *              content:
  *                  application/json:
- *                      schema: 
+ *                      schema:
  *                          type: array
  *                          items:
  *                              $ref: '#/components/schemas/Cards'
- *          400: 
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found  
+ *          404:
+ *              description: Order not found
  * /customers/{id}/delete:
  *  delete:
  *      summary: Eliminar un usuario
@@ -280,15 +280,15 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *         name: id
  *         description: Se ingrese el ID del usuario a eliminar
  *         required: true
- *         schema: 
+ *         schema:
  *          type: string
  *      responses:
- *          200: 
+ *          200:
  *              description: Usuario eliminado con exito
- *          400: 
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found            
+ *          404:
+ *              description: Order not found
  * /customer/token/create:
  *  post:
  *      summary: Crear y Tokenizar una tarjeta de credito
@@ -319,11 +319,11 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *      responses:
  *          200:
  *              description: new Payment created successfully!
- * 
- *          400: 
+ *
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found  
+ *          404:
+ *              description: Order not found
  * /payment_intents/{id}/confirm:
  *  post:
  *      summary: Confirmar un pago
@@ -333,7 +333,7 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *         name: id
  *         description: Se ingrese el PaymentId el cual vamos a confirmar el pago
  *         required: true
- *         schema: 
+ *         schema:
  *          type: string
  *      requestBody:
  *          required: true
@@ -345,16 +345,16 @@ const stripe = require('stripe')(process.env.VUE_APP_STRIPE_SECRET);
  *                      properties:
  *                          CardId:
  *                              type: string
- *                              example: card_1A2B3C4D5E                            
+ *                              example: card_1A2B3C4D5E
  *      responses:
  *          200:
  *              description: La tarjeta fue añadida correctamente
- *          
- *          400: 
+ *
+ *          400:
  *              description: Id invalido, el usuario no se encuentra registrado
- *          404: 
- *              description: Order not found       
- * 
+ *          404:
+ *              description: Order not found
+ *
  */
 
 
