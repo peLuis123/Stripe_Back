@@ -18,7 +18,7 @@ const swaggerDefinition = {
         version:"1.0.0",
     },
     servers:[{
-        url: "http://localhost:3000"
+        url: "https://api-stripe.onrender.com/"
     }],
     //apis:[`${path.join(__dirname,"./controllers/*js")}`],
 };
