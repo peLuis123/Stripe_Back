@@ -18,7 +18,7 @@ const swaggerDefinition = {
         version:"1.0.0",
     },
     servers:[{
-        url: "http://localhost:5000"
+        url: "http://localhost:3000"
     }],
     //apis:[`${path.join(__dirname,"./controllers/*js")}`],
 };
