@@ -36,6 +36,12 @@ export const stripeWebhook = (req, res) => {
     case 'payment_intent.payment_failed':
       console.log(' Webhook: payment_intent.payment_failed', event.data.object.id);
       break;
+    case 'refund.created':
+      console.log(' Webhook: refund.created', event.data.object.id);
+      break;
+    case 'charge.refunded':
+      console.log(' Webhook: charge.refunded', event.data.object.id);
+      break;
     default:
       console.log(`Webhook event received: ${event.type}`);
   }

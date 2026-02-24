@@ -117,6 +117,22 @@
  *          required:
  *              - paymentId
  *
+ *      PaymentRefundRequest:
+ *          type: object
+ *          properties:
+ *              chargeId:
+ *                  type: string
+ *                  description: ID del Charge (ch_...)
+ *              amount:
+ *                  type: integer
+ *                  description: Monto a reembolsar en unidad mínima (opcional)
+ *              reason:
+ *                  type: string
+ *                  enum: [duplicate, fraudulent, requested_by_customer]
+ *                  description: Motivo opcional del reembolso
+ *          required:
+ *              - chargeId
+ *
  *      CustomerItem:
  *          type: object
  *          properties:
@@ -558,6 +574,79 @@
  *                      schema:
  *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
+ * /api/payments:
+ *  get:
+ *      summary: Listar PaymentIntents por usuario
+ *      tags: [Payments]
+ *      parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *          type: string
+ *         description: ID del customer en Stripe (cus_...)
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *          type: integer
+ *         description: Cantidad de registros (máximo 100)
+ *      responses:
+ *          200:
+ *              description: Pagos obtenidos correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: userId faltante o inválido
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *
+ * /api/payments/{paymentIntentId}:
+ *  get:
+ *      summary: Obtener un PaymentIntent por ID
+ *      tags: [Payments]
+ *      parameters:
+ *       - in: path
+ *         name: paymentIntentId
+ *         required: true
+ *         schema:
+ *          type: string
+ *      responses:
+ *          200:
+ *              description: Pago obtenido correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          404:
+ *              description: Pago no encontrado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *
  * /api/payments/confirm:
  *  post:
  *      summary: Confirmar intento de pago
@@ -583,6 +672,72 @@
  *                          $ref: '#/components/schemas/ApiErrorResponse'
  *          402:
  *              description: Error de pago/tarjeta
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *
+ * /api/payments/refund:
+ *  post:
+ *      summary: Crear reembolso de pago
+ *      tags: [Payments]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/PaymentRefundRequest'
+ *      responses:
+ *          201:
+ *              description: Reembolso creado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          404:
+ *              description: Pago o cargo no encontrado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *
+ * /api/payments/refund/payment-intent/{paymentIntentId}:
+ *  get:
+ *      summary: Listar reembolsos por PaymentIntent
+ *      tags: [Payments]
+ *      parameters:
+ *       - in: path
+ *         name: paymentIntentId
+ *         required: true
+ *         schema:
+ *          type: string
+ *      responses:
+ *          200:
+ *              description: Reembolsos obtenidos correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
  *              content:
  *                  application/json:
  *                      schema:
