@@ -1,5 +1,6 @@
 import express from "express";
 import cors from 'cors';
+import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import path from 'path';
@@ -7,6 +8,7 @@ import { fileURLToPath } from 'url';
 import cardsRoutes from "./cards/index.js";
 import customersRoutes from "./customers/index.js";
 import paymentsRoutes from "./payments/index.js";
+import { apiError, notFound } from '../middlewares/apiError.js';
 import '../docs/swagger.js';
 const app = express();
 
@@ -32,6 +34,7 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
@@ -40,5 +43,8 @@ app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use("/api/cards", cardsRoutes);
 app.use("/api/customers", customersRoutes);
 app.use("/api/payments", paymentsRoutes);
+
+app.use(notFound);
+app.use(apiError);
 
 export default app;
