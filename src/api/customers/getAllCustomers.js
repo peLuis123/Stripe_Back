@@ -1,21 +1,13 @@
 import stripe from '../../config/stripe.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const getAllCustomers = async (req, res) => {
-  try {
-    const customer = await stripe.customers.list({
-      limit: 10,
-    });
-    if (customer) {
-      res.send({
-        status: true,
-        data: customer,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "Verifique que las keys esten ingresadas correctamente",
-      status: false,
-    })
-  }
+  const customer = await stripe.customers.list({
+    limit: 10,
+  });
 
-}
+  return sendResponse(res, {
+    message: 'Clientes listados correctamente',
+    data: customer,
+  });
+};

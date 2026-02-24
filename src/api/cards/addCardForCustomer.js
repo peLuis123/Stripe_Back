@@ -1,23 +1,22 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const assignCard = async (req, res) => {
-  try {
-    const card = await stripe.customers.createSource(
-      req.body.userId,
-      { source: req.body.source }
-    );
-    if (card) {
-      res.send({
-        message: 'Tarjeta añadida con exito',
+  const { userId, source } = req.body;
 
-        cardId: card.id,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "verifique que el usuario este registrado",
-      status: false,
-    })
+  if (!userId || !source) {
+    throw new ApiError(400, 'userId y source son requeridos');
   }
-}
+
+  const card = await stripe.customers.createSource(userId, { source });
+
+  return sendResponse(res, {
+    message: 'Tarjeta añadida con éxito',
+    data: {
+      cardId: card.id,
+      brand: card.brand,
+      last4: card.last4,
+    },
+  });
+};

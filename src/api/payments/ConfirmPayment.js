@@ -1,21 +1,18 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const confirmPayment = async (req, res) => {
-  try {
-    const paymentIntent = await stripe.paymentIntents.confirm(
-      req.body.paymentId,
-    );
-    if (paymentIntent) {
-      res.send({
-        status: true,
-        data: paymentIntent,
+  const { paymentId } = req.body;
 
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "verifique que el payment intent ahya sido creado",
-      status: false,
-    })
+  if (!paymentId) {
+    throw new ApiError(400, 'paymentId es requerido');
   }
-}
+
+  const paymentIntent = await stripe.paymentIntents.confirm(paymentId);
+
+  return sendResponse(res, {
+    message: 'Pago confirmado correctamente',
+    data: paymentIntent,
+  });
+};

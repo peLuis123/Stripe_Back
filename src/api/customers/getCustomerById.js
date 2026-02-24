@@ -1,21 +1,18 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const getCustomerById = async (req, res) => {
-  const id = req.params.id
-  try {
-    const customer = await stripe.customers.retrieve(
-      id
-    );
-    if (customer) {
-      res.send({
-        data: customer,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "el usuario no existe intente nuevamente" + id,
-      status: false,
-    })
+  const { id } = req.params;
+
+  if (!id) {
+    throw new ApiError(400, 'id es requerido');
   }
-}
+
+  const customer = await stripe.customers.retrieve(id);
+
+  return sendResponse(res, {
+    message: 'Cliente obtenido correctamente',
+    data: customer,
+  });
+};

@@ -1,29 +1,27 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const updateCustomer = async (req, res) => {
-  try {
-    const customer = await stripe.customers.update(
-      req.body.userId,
-      {
-        email: req.body.email,
-        name: req.body.name,
-        //description: req.body.description,
-        phone: req.body.phone,
-      }
-    );
-    if (customer) {
-      res.send({
-        message: 'Customer updated successfully',
-        id: customer.id,
-        email: customer.email,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "Verifique que los datos sean correctos",
-      status: false,
-    })
+  const { userId, email, name, phone } = req.body;
+
+  if (!userId) {
+    throw new ApiError(400, 'userId es requerido');
   }
 
-}
+  const customer = await stripe.customers.update(userId, {
+    email,
+    name,
+    phone,
+  });
+
+  return sendResponse(res, {
+    message: 'Cliente actualizado correctamente',
+    data: {
+      id: customer.id,
+      email: customer.email,
+      name: customer.name,
+      phone: customer.phone,
+    },
+  });
+};

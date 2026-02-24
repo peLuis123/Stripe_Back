@@ -2,32 +2,42 @@
  * @swagger
  * components:
  *  schemas:
- *      User:
+ *      ApiErrorResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: false
+ *              message:
+ *                  type: string
+ *                  example: email, name y phone son requeridos
+ *              code:
+ *                  type: string
+ *                  nullable: true
+ *                  example: resource_missing
+ *          required:
+ *              - status
+ *              - message
+ *
+ *      CustomerCreateRequest:
  *          type: object
  *          properties:
  *              email:
  *                  type: string
- *                  description: Correo del cliente
  *              name:
  *                  type: string
- *                  description: Nombre del cliente
  *              phone:
  *                  type: string
- *                  description: Número de contacto
  *          required:
  *              - email
  *              - name
  *              - phone
- *          example:
- *              email: pedrorc2018@gmail.com
- *              name: Pedro Luis Ramos Calla
- *              phone: 958104634
- *      UserUpdate:
+ *
+ *      CustomerUpdateRequest:
  *          type: object
  *          properties:
  *              userId:
  *                  type: string
- *                  description: ID del customer en Stripe
  *              email:
  *                  type: string
  *              name:
@@ -36,7 +46,16 @@
  *                  type: string
  *          required:
  *              - userId
- *      CardCreate:
+ *
+ *      CustomerDeleteRequest:
+ *          type: object
+ *          properties:
+ *              userId:
+ *                  type: string
+ *          required:
+ *              - userId
+ *
+ *      CardCreateRequest:
  *          type: object
  *          properties:
  *              number:
@@ -52,12 +71,8 @@
  *              - exp_month
  *              - exp_year
  *              - cvc
- *          example:
- *              number: 4242424242424242
- *              exp_month: 12
- *              exp_year: 2028
- *              cvc: 332
- *      CardAssign:
+ *
+ *      CardAssignRequest:
  *          type: object
  *          properties:
  *              userId:
@@ -67,10 +82,8 @@
  *          required:
  *              - userId
  *              - source
- *          example:
- *              userId: cus_A1B23C4D5E
- *              source: tok_1A2B3C4D5E
- *      CardDefault:
+ *
+ *      CardDefaultRequest:
  *          type: object
  *          properties:
  *              userId:
@@ -80,39 +93,161 @@
  *          required:
  *              - userId
  *              - default_source
- *          example:
- *              userId: cus_A1B23C4D5E
- *              default_source: card_1AB23C4D5E
- *      PaymentCreate:
+ *
+ *      PaymentCreateRequest:
  *          type: object
  *          properties:
  *              amount:
  *                  type: integer
- *                  description: Monto del pago
+ *                  description: Monto en unidad mínima (ej. centavos)
  *              customer_id:
  *                  type: string
- *                  description: ID del customer en Stripe
  *              payment_method:
  *                  type: string
- *                  description: ID del método de pago/tarjeta
  *          required:
  *              - amount
  *              - customer_id
  *              - payment_method
- *          example:
- *              amount: 5000
- *              customer_id: cus_A1B23C4D5E
- *              payment_method: card_1AB23C4D5E
- *      PaymentConfirm:
+ *
+ *      PaymentConfirmRequest:
  *          type: object
  *          properties:
  *              paymentId:
  *                  type: string
- *                  description: ID del payment_intent
  *          required:
  *              - paymentId
- *          example:
- *              paymentId: pi_1N2aB3cD4e
+ *
+ *      CustomerItem:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: string
+ *              email:
+ *                  type: string
+ *              name:
+ *                  type: string
+ *              phone:
+ *                  type: string
+ *
+ *      CardTokenItem:
+ *          type: object
+ *          properties:
+ *              token_id:
+ *                  type: string
+ *              card_id:
+ *                  type: string
+ *              card_brand:
+ *                  type: string
+ *              card_last4:
+ *                  type: string
+ *
+ *      CardAssignItem:
+ *          type: object
+ *          properties:
+ *              cardId:
+ *                  type: string
+ *              brand:
+ *                  type: string
+ *              last4:
+ *                  type: string
+ *
+ *      DeleteItem:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: string
+ *
+ *      SuccessCustomerResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Cliente creado correctamente
+ *              data:
+ *                  $ref: '#/components/schemas/CustomerItem'
+ *
+ *      SuccessListResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Clientes listados correctamente
+ *              data:
+ *                  type: object
+ *                  description: Respuesta cruda de Stripe (lista paginada)
+ *
+ *      SuccessCardTokenResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Tarjeta tokenizada correctamente
+ *              data:
+ *                  $ref: '#/components/schemas/CardTokenItem'
+ *
+ *      SuccessCardAssignResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Tarjeta añadida con éxito
+ *              data:
+ *                  $ref: '#/components/schemas/CardAssignItem'
+ *
+ *      SuccessDeleteResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Usuario eliminado con éxito
+ *              data:
+ *                  $ref: '#/components/schemas/DeleteItem'
+ *
+ *      SuccessGenericStripeResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *              data:
+ *                  type: object
+ *                  description: Objeto devuelto por Stripe
+ *
+ *      WebhookSuccessResponse:
+ *          type: object
+ *          properties:
+ *              status:
+ *                  type: boolean
+ *                  example: true
+ *              message:
+ *                  type: string
+ *                  example: Webhook recibido correctamente
+ *              data:
+ *                  type: object
+ *                  properties:
+ *                      received:
+ *                          type: boolean
+ *                          example: true
+ *                      type:
+ *                          type: string
+ *                          example: payment_intent.succeeded
  */
 
 /**
@@ -120,61 +255,146 @@
  * /api/customers/create:
  *  post:
  *      summary: Crear cliente en Stripe
- *      tags: [User]
+ *      tags: [Customers]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/User'
+ *                      $ref: '#/components/schemas/CustomerCreateRequest'
  *      responses:
- *          200:
+ *          201:
  *              description: Cliente creado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessCustomerResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/customers/update:
  *  put:
  *      summary: Actualizar cliente en Stripe
- *      tags: [User]
+ *      tags: [Customers]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/UserUpdate'
+ *                      $ref: '#/components/schemas/CustomerUpdateRequest'
  *      responses:
  *          200:
  *              description: Cliente actualizado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessCustomerResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/customers/delete:
  *  delete:
  *      summary: Eliminar cliente en Stripe
- *      tags: [User]
+ *      tags: [Customers]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/CustomerDeleteRequest'
  *      responses:
  *          200:
  *              description: Cliente eliminado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessDeleteResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/customers/{id}:
  *  get:
  *      summary: Obtener cliente por ID
- *      tags: [User]
+ *      tags: [Customers]
  *      parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: ID del customer
+ *         schema:
+ *          type: string
  *      responses:
  *          200:
- *              description: Cliente encontrado
+ *              description: Cliente obtenido correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          404:
+ *              description: Cliente no encontrado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/customers:
  *  get:
  *      summary: Listar clientes
- *      tags: [User]
+ *      tags: [Customers]
  *      responses:
  *          200:
- *              description: Lista de clientes
+ *              description: Clientes listados correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessListResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/cards/create:
  *  post:
@@ -185,38 +405,86 @@
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/CardCreate'
+ *                      $ref: '#/components/schemas/CardCreateRequest'
  *      responses:
- *          200:
+ *          201:
  *              description: Tarjeta tokenizada correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessCardTokenResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/cards/assign:
  *  post:
- *      summary: Asignar tarjeta a cliente
+ *      summary: Asignar tarjeta a un cliente
  *      tags: [Cards]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/CardAssign'
+ *                      $ref: '#/components/schemas/CardAssignRequest'
  *      responses:
  *          200:
- *              description: Tarjeta asignada correctamente
+ *              description: Tarjeta añadida correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessCardAssignResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/cards/default:
  *  post:
- *      summary: Definir tarjeta por defecto
+ *      summary: Definir tarjeta por defecto de un cliente
  *      tags: [Cards]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/CardDefault'
+ *                      $ref: '#/components/schemas/CardDefaultRequest'
  *      responses:
  *          200:
- *              description: Tarjeta por defecto actualizada
+ *              description: Método de pago actualizado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/cards/{id}:
  *  get:
@@ -225,39 +493,129 @@
  *      parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: ID del customer
+ *         schema:
+ *          type: string
  *      responses:
  *          200:
- *              description: Tarjetas del cliente
+ *              description: Tarjetas listadas correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          404:
+ *              description: Cliente no encontrado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/payments/create:
  *  post:
  *      summary: Crear intento de pago
- *      tags: [Payment]
+ *      tags: [Payments]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/PaymentCreate'
+ *                      $ref: '#/components/schemas/PaymentCreateRequest'
  *      responses:
- *          200:
- *              description: Pago creado correctamente
+ *          201:
+ *              description: Intento de pago creado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          402:
+ *              description: Error de pago/tarjeta
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  *
  * /api/payments/confirm:
  *  post:
  *      summary: Confirmar intento de pago
- *      tags: [Payment]
+ *      tags: [Payments]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/PaymentConfirm'
+ *                      $ref: '#/components/schemas/PaymentConfirmRequest'
  *      responses:
  *          200:
  *              description: Pago confirmado correctamente
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/SuccessGenericStripeResponse'
+ *          400:
+ *              description: Datos inválidos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          402:
+ *              description: Error de pago/tarjeta
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Error interno del servidor
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *
+ * /api/webhooks/stripe:
+ *  post:
+ *      summary: Recibir eventos de Stripe Webhooks
+ *      tags: [Webhooks]
+ *      description: Endpoint para eventos firmados por Stripe. Requiere cabecera stripe-signature.
+ *      responses:
+ *          200:
+ *              description: Webhook recibido y procesado
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/WebhookSuccessResponse'
+ *          400:
+ *              description: Firma inválida o faltante
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
+ *          500:
+ *              description: Falta configuración del webhook secret
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/ApiErrorResponse'
  */

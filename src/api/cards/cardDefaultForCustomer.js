@@ -1,25 +1,20 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const cardDefault = async (req, res) => {
-  try {
-    const customer = await stripe.customers.update(
-      req.body.userId,
-      {
-        default_source: req.body.default_source,
-      }
+  const { userId, default_source: defaultSource } = req.body;
 
-    );
-    if (customer) {
-      res.send({
-        message: 'Metodo de pago Actualizado con exito',
-        data: customer,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "Valida los datos de la tarjeta",
-      status: false,
-    })
+  if (!userId || !defaultSource) {
+    throw new ApiError(400, 'userId y default_source son requeridos');
   }
-}
+
+  const customer = await stripe.customers.update(userId, {
+    default_source: defaultSource,
+  });
+
+  return sendResponse(res, {
+    message: 'Método de pago actualizado con éxito',
+    data: customer,
+  });
+};

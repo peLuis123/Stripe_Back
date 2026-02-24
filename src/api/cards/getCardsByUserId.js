@@ -1,24 +1,21 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const getCards = async (req, res) => {
-        try {
-            const cards = await stripe.customers.listSources(
-                req.params.id,
-                {
-                    object: 'card',
-                    limit: 10
-                }
-            );
-            if (cards) {
-                res.status(201).send({
-                    data: cards.data,
-                    status: true,
-                })
-            }
-        } catch (error) {
-            res.status(404).json({
-                message: "El usuario no tiene una cuenta registrada",
-                status: false,
-            })
-        }
-}
+    const { id } = req.params;
+
+    if (!id) {
+        throw new ApiError(400, 'id es requerido');
+    }
+
+    const cards = await stripe.customers.listSources(id, {
+        object: 'card',
+        limit: 10,
+    });
+     
+    return sendResponse(res, {
+        message: 'Tarjetas listadas correctamente',
+        data: cards.data,
+    });
+};

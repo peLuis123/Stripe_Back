@@ -1,31 +1,26 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const createPayment = async (req, res) => {
-  try {
-    const customerId = req.body.customer_id;
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: req.body.amount,
-      currency: "EUR",
-      payment_method_types: ['card'],
-      payment_method: req.body.payment_method,
-      //payment_method: 'card_1Mg8wlIo7cwSV9VQ2Gl3Rm03',
-      customer: customerId,
-    });
+  const { customer_id: customerId, amount, payment_method: paymentMethod } = req.body;
 
-    if (paymentIntent) {
-
-      res.send({
-        status: true,
-        data: paymentIntent,
-        id: paymentIntent.id,
-        customer: paymentIntent.customer
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "verifique que la tarjeta ingresada sea valida",
-      status: false,
-    })
+  if (!customerId || !amount || !paymentMethod) {
+    throw new ApiError(400, 'customer_id, amount y payment_method son requeridos');
   }
 
-}
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount * 100, 
+    currency: 'EUR',
+    payment_method_types: ['card'],
+    payment_method: paymentMethod,
+    customer: customerId,
+  });
+
+  return sendResponse(res, {
+    statusCode: 201,
+    message: 'Intento de pago creado correctamente',
+    data: paymentIntent,
+  });
+};
+

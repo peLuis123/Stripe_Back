@@ -1,28 +1,31 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const create = async (req, res) => {
-  try {
-    const token = await stripe.tokens.create({
-      card: {
-        number: req.body.number,
-        exp_month: req.body.exp_month,
-        exp_year: req.body.exp_year,
-        cvc: req.body.cvc,
-      },
-    });
-    if (token) {
-      res.send({
-        token_id: token.id,
-        card_id: token.card.id,
-        card_brand: token.card.brand,
-        card_last4: token.card.last4,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "los datos ingresados son incorrectos",
-      status: false,
-    })
+  const { number, exp_month: expMonth, exp_year: expYear, cvc } = req.body;
+
+  if (!number || !expMonth || !expYear || !cvc) {
+    throw new ApiError(400, 'number, exp_month, exp_year y cvc son requeridos');
   }
-}
+
+  const token = await stripe.tokens.create({
+    card: {
+      number,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvc,
+    },
+  });
+
+  return sendResponse(res, {
+    statusCode: 201,
+    message: 'Tarjeta tokenizada correctamente',
+    data: {
+      token_id: token.id,
+      card_id: token.card.id,
+      card_brand: token.card.brand,
+      card_last4: token.card.last4,
+    },
+  });
+};

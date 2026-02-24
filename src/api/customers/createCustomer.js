@@ -1,23 +1,28 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const createCustomer = async (req, res) => {
-  try {
-    const customer = await stripe.customers.create({
-      email: req.body.email,
-      name: req.body.name,
-      phone: req.body.phone,
-    })
-    if (customer) {
-      res.send({
-        id: customer.id,
-        email: customer.email,
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "Verifique que todos los datos sean correctos",
-      status: false,
-    })
+  const { email, name, phone } = req.body;
+
+  if (!email || !name || !phone) {
+    throw new ApiError(400, 'email, name y phone son requeridos');
   }
-}
+
+  const customer = await stripe.customers.create({
+    email,
+    name,
+    phone,
+  });
+
+  return sendResponse(res, {
+    statusCode: 201,
+    message: 'Cliente creado correctamente',
+    data: {
+      id: customer.id,
+      email: customer.email,
+      name: customer.name,
+      phone: customer.phone,
+    },
+  });
+};

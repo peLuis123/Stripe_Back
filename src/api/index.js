@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import cardsRoutes from "./cards/index.js";
 import customersRoutes from "./customers/index.js";
 import paymentsRoutes from "./payments/index.js";
+import webhooksRoutes from "./webhooks/index.js";
 import { apiError, notFound } from '../middlewares/apiError.js';
 import '../docs/swagger.js';
 const app = express();
@@ -35,6 +36,7 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 app.use(cors());
 app.use(morgan('dev'));
+app.use('/api/webhooks', webhooksRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerSpec));

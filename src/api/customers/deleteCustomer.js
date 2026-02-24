@@ -1,20 +1,18 @@
 import stripe from '../../config/stripe.js';
+import ApiError from '../../utils/ApiError.js';
+import { sendResponse } from '../../utils/sendResponse.js';
 
 export const deleteCustomer = async (req, res) => {
-  try {
-    const deleted = await stripe.customers.del(
-      req.params.id,
-    );
-    if (deleted) {
-      res.send({
-        message: 'usuario eliminado con exito',
-        status: true,
-      })
-    }
-  } catch (error) {
-    res.status(404).json({
-      message: "el usuario no existe",
-      status: false,
-    })
+  const customerId = req.params.id || req.body.userId;
+
+  if (!customerId) {
+    throw new ApiError(400, 'id del usuario es requerido');
   }
-}
+
+  await stripe.customers.del(customerId);
+
+  return sendResponse(res, {
+    message: 'Usuario eliminado con éxito',
+    data: { id: customerId },
+  });
+};
